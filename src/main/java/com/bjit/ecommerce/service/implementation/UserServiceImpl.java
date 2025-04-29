@@ -6,7 +6,7 @@ import com.bjit.ecommerce.entity.UserEntity;
 import com.bjit.ecommerce.repository.UserRepository;
 import com.bjit.ecommerce.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+//import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -20,7 +20,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO registerUser(UserEntity user) {
-        user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
+//        user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
         try {
             UserEntity savedUser = userRepository.save(user);
             return UserDTO.builder()
@@ -36,7 +36,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String loginUser(LoginRequestDTO userLogin) {
-        UserEntity user = userRepository.findByEmailAndPassword(userLogin.getUsername(), new BCryptPasswordEncoder().encode(userLogin.getPassword()));
+//        UserEntity user = userRepository.findByEmailAndPassword(userLogin.getUsername(), new BCryptPasswordEncoder().encode(userLogin.getPassword()));
+        UserEntity user = userRepository.findByEmailAndPassword(userLogin.getUsername(), userLogin.getPassword());
         if (user == null) {
             throw new NullPointerException("Invalid email or password");
         }
@@ -94,7 +95,7 @@ public class UserServiceImpl implements UserService {
         existingUser.setPhone(user.getPhone());
         existingUser.setEmail(user.getEmail());
         existingUser.setAddress(user.getAddress());
-        existingUser.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
+//        existingUser.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
         existingUser.setRole(user.getRole());
 
         UserEntity updatedUser = userRepository.save(existingUser);

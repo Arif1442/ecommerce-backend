@@ -1,5 +1,6 @@
 package com.bjit.ecommerce.entity;
 
+import jakarta.validation.constraints.*;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -24,7 +25,9 @@ public class UserEntity {
     @JoinColumn(name = "address_id", referencedColumnName = "id")
     private AddressEntity address;
 
+    @Email
     @NonNull
+    @NotBlank
     @Column(unique = true, length = 100)
     private String email;
 

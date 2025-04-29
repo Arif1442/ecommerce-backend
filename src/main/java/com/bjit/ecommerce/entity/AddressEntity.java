@@ -23,6 +23,6 @@ public class AddressEntity {
     @Column(nullable = false, length = 50)
     private String district;
 
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false)
     private int postalCode;
 }
