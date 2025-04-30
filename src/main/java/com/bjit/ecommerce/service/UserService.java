@@ -18,4 +18,6 @@ public interface UserService {
     UserDTO getUserByEmail(String email);
 
     UserDTO updateUser(long id, UserEntity user);
+
+    void deleteUser(Long id);
 }

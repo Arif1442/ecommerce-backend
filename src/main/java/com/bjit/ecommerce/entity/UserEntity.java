@@ -1,5 +1,6 @@
 package com.bjit.ecommerce.entity;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import jakarta.persistence.*;
 import lombok.*;
@@ -18,20 +19,22 @@ public class UserEntity {
     @Column(nullable = false, length = 100)
     private String name;
 
-    @Column(nullable = false, length = 15)
+    @NotBlank(message = "Phone number can't be empty")
+    @Size(max = 11, min = 11, message = "Phone number must be 11 digits")
     private String phone;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @Valid
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "address_id", referencedColumnName = "id")
     private AddressEntity address;
 
     @Email
-    @NonNull
-    @NotBlank
-    @Column(unique = true, length = 100)
+    @NotBlank(message = "Email is mandatory")
+    @Column(name ="user_name", unique = true, length = 100)
     private String email;
 
-    @Column(nullable = false)
+    @NotBlank
+    @Size(min=8, message = "Password must be at least 8 characters long")
     private String password;
 
     @Enumerated(EnumType.STRING)

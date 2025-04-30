@@ -1,6 +1,7 @@
 package com.bjit.ecommerce.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.Valid;
 import lombok.*;
 
 @Data
@@ -23,6 +24,10 @@ public class AddressEntity {
     @Column(nullable = false, length = 50)
     private String district;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 20)
     private int postalCode;
+
+    @NonNull
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, optional = false, mappedBy = "address")
+    private UserEntity user;
 }

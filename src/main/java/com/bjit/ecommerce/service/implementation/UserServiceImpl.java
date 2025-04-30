@@ -23,12 +23,9 @@ public class UserServiceImpl implements UserService {
 //        user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
         try {
             UserEntity savedUser = userRepository.save(user);
-            return UserDTO.builder()
-                    .name(savedUser.getName())
-                    .phone(savedUser.getPhone())
-                    .email(savedUser.getEmail())
-                    .address(savedUser.getAddress())
-                    .build();
+            UserDTO userDTO = mapEntityToDto(savedUser);
+
+            return userDTO;
         } catch (Exception e) {
             throw new NullPointerException("User registration failed: " + e.getMessage());
         }
@@ -48,13 +45,8 @@ public class UserServiceImpl implements UserService {
     public List<UserDTO> getAllUsers() {
 
         List<UserDTO> users = new ArrayList<>();
-        userRepository.findAll().forEach(user -> { users.add(
-                UserDTO.builder()
-                .name(user.getName())
-                .phone(user.getPhone())
-                .email(user.getEmail())
-                .address(user.getAddress())
-                .build());
+        userRepository.findAll().forEach(user -> {
+            users.add(mapEntityToDto(user));
         });
 
         return users;
@@ -63,13 +55,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDTO getUserById(long id) {
         UserEntity user = userRepository.findById(id).orElseThrow(() -> new NullPointerException("User with id " + id + " not found"));
+        UserDTO userDTO = mapEntityToDto(user);
 
-        return UserDTO.builder()
-                .name(user.getName())
-                .phone(user.getPhone())
-                .email(user.getEmail())
-                .address(user.getAddress())
-                .build();
+        return userDTO;
     }
 
     @Override
@@ -79,12 +67,9 @@ public class UserServiceImpl implements UserService {
         if( user == null ) {
             throw new NullPointerException("User not found with email : " + email);
         }
-        return UserDTO.builder()
-                .name(user.getName())
-                .phone(user.getPhone())
-                .email(user.getEmail())
-                .address(user.getAddress())
-                .build();
+        UserDTO userDTO = mapEntityToDto(user);
+
+        return userDTO;
     }
 
     @Override
@@ -96,6 +81,7 @@ public class UserServiceImpl implements UserService {
         existingUser.setEmail(user.getEmail());
         existingUser.setAddress(user.getAddress());
 //        existingUser.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
+        existingUser.setPassword(user.getPassword());
         existingUser.setRole(user.getRole());
 
         UserEntity updatedUser = userRepository.save(existingUser);
@@ -103,11 +89,30 @@ public class UserServiceImpl implements UserService {
         if( updatedUser.getId() == null ) {
             throw new NullPointerException("User update failed");
         }
-        return UserDTO.builder()
-                .name(updatedUser.getName())
-                .phone(updatedUser.getPhone())
-                .email(updatedUser.getEmail())
-                .address(updatedUser.getAddress())
+        UserDTO userDTO = mapEntityToDto(updatedUser);
+
+        return userDTO;
+    }
+
+    @Override
+    public void deleteUser(Long id) {
+        UserEntity existingUser = userRepository.findById(id).orElseThrow(() -> new NullPointerException("User with id " + id + " not found"));
+        userRepository.delete(existingUser);
+
+    }
+
+    private UserDTO mapEntityToDto(UserEntity user) {
+        UserDTO userDTO = UserDTO.builder()
+                .name(user.getName())
+                .phone(user.getPhone())
+                .email(user.getEmail())
                 .build();
+        if( user.getAddress() != null ) {
+            userDTO.setStreet(user.getAddress().getStreet());
+            userDTO.setCity(user.getAddress().getCity());
+            userDTO.setPostalCode(user.getAddress().getPostalCode());
+        }
+
+        return userDTO;
     }
 }

@@ -1,6 +1,5 @@
 package com.bjit.ecommerce.dto;
 
-import com.bjit.ecommerce.entity.AddressEntity;
 import lombok.*;
 
 @Data
@@ -11,5 +10,7 @@ public class UserDTO {
     private String name;
     private String phone;
     private String email;
-    private AddressEntity address;
+    private String street;
+    private String city;
+    private int postalCode;
 }
