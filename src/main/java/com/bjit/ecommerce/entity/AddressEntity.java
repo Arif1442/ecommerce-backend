@@ -1,7 +1,7 @@
 package com.bjit.ecommerce.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 @Data
@@ -15,7 +15,8 @@ public class AddressEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 100)
+    @NotBlank
+    @Column(length = 100)
     private String street;
 
     @Column(nullable = false, length = 50)
@@ -27,7 +28,7 @@ public class AddressEntity {
     @Column(nullable = false, length = 20)
     private int postalCode;
 
-    @NonNull
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, optional = false, mappedBy = "address")
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, optional = false)//, mappedBy = "address")
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
     private UserEntity user;
 }

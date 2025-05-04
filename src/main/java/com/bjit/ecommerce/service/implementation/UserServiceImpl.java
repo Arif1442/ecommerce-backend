@@ -5,8 +5,8 @@ import com.bjit.ecommerce.dto.UserDTO;
 import com.bjit.ecommerce.entity.UserEntity;
 import com.bjit.ecommerce.repository.UserRepository;
 import com.bjit.ecommerce.service.UserService;
+import com.bjit.ecommerce.service.utils.Utility;
 import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -16,11 +16,15 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
 
     @Autowired
-    private UserRepository userRepository;
+    UserRepository userRepository;
+
+    @Autowired
+    Utility utility;
+
 
     @Override
     public UserDTO registerUser(UserEntity user) {
-//        user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
+        user.setPassword(utility.encodePassword(user.getPassword()));
         try {
             UserEntity savedUser = userRepository.save(user);
             UserDTO userDTO = mapEntityToDto(savedUser);
@@ -33,8 +37,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String loginUser(LoginRequestDTO userLogin) {
-//        UserEntity user = userRepository.findByEmailAndPassword(userLogin.getUsername(), new BCryptPasswordEncoder().encode(userLogin.getPassword()));
-        UserEntity user = userRepository.findByEmailAndPassword(userLogin.getUsername(), userLogin.getPassword());
+        UserEntity user = userRepository.findByEmailAndPassword(userLogin.getUsername(), utility.encodePassword(userLogin.getPassword()));
         if (user == null) {
             throw new NullPointerException("Invalid email or password");
         }
@@ -80,7 +83,7 @@ public class UserServiceImpl implements UserService {
         existingUser.setPhone(user.getPhone());
         existingUser.setEmail(user.getEmail());
         existingUser.setAddress(user.getAddress());
-//        existingUser.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
+        existingUser.setPassword(utility.encodePassword(user.getPassword()));
         existingUser.setPassword(user.getPassword());
         existingUser.setRole(user.getRole());
 

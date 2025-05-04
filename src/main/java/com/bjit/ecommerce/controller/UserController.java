@@ -14,11 +14,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/bjit/ecommerce/users")
+@RequestMapping("/bjit/ecommerce/user")
 public class UserController {
 
     @Autowired
-    private UserService userService;
+    UserService userService;
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody @Valid UserEntity newUser) {
