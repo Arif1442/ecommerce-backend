@@ -2,58 +2,48 @@ package com.bjit.ecommerce.controller;
 
 import com.bjit.ecommerce.dto.ProductResponseDTO;
 import com.bjit.ecommerce.entity.ProductEntity;
-import com.bjit.ecommerce.service.CartService;
-import com.bjit.ecommerce.service.OrderService;
 import com.bjit.ecommerce.service.ProductService;
-import org.springframework.web.bind.annotation.RestController;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("/products")
+@RequestMapping("bjit/ecommerce/product")
 public class ProductController {
 
     @Autowired
-    private ProductService productService;
-    @Autowired
-    private OrderService orderService;
-    @Autowired
-    private CartService cartService;
+    ProductService productService;
 
-
-    //view all products
-    @GetMapping("/all")
-    public ResponseEntity<?> viewAllProducts() {
-        return ResponseEntity.ok(productService.getAllProducts());
+    @PostMapping("/create")
+    public ResponseEntity<?> createNewProduct(@RequestParam String jwtToken, @RequestBody ProductEntity newProduct) {
+        ProductResponseDTO createdProduct = productService.addProduct(jwtToken, newProduct);
+        return ResponseEntity.ok(createdProduct);
     }
 
-    // View a single product by ID
+    @PutMapping("/update/{id}")
+    public ResponseEntity<?> updateExistingProduct(@RequestParam String jwtToken, @PathVariable long id, @RequestBody ProductEntity updatedProduct) {
+        ProductResponseDTO savedProduct = productService.updateProduct(jwtToken, id, updatedProduct);
+        return new ResponseEntity<>(savedProduct, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> deleteExistingProduct(@RequestParam String jwtToken, @PathVariable long id) {
+        productService.deleteProduct(jwtToken, id);
+        return ResponseEntity.ok("Product with id " + id + " deleted successfully.");
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<?> showAllProducts() {
+        List<ProductResponseDTO> allProducts = productService.getAllProducts();
+        return new ResponseEntity<>(allProducts, HttpStatus.OK);
+    }
+
     @GetMapping("/{id}")
-    public ResponseEntity<?> viewProduct(@PathVariable Long id) {
+    public ResponseEntity<?> findProductById(@PathVariable long id) {
         ProductResponseDTO product = productService.getProductById(id);
         return ResponseEntity.ok(product);
-    }
-
-    // Add a new product
-    @PostMapping("/add")
-    public ResponseEntity<?> addProduct(@RequestBody ProductEntity product) {
-        ProductResponseDTO savedProduct = productService.addProduct(product);
-        return ResponseEntity.ok(savedProduct);
-    }
-
-    // Edit an existing product
-    @PutMapping("/edit/{id}")
-    public ResponseEntity<?> editProduct(@PathVariable Long id, @RequestBody ProductEntity updatedProduct) {
-        ProductResponseDTO product = productService.editProduct(id, updatedProduct);
-        return ResponseEntity.ok(product);
-    }
-
-    // Delete a product
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deleteProduct(@PathVariable Long id) {
-        productService.deleteProduct(id);
-        return ResponseEntity.ok("Product deleted successfully.");
     }
 }
